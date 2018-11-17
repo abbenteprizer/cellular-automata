@@ -5,10 +5,14 @@ import java.util.*;
 
 // Creates N*N cell automata with states, alive, sick, dead and immune. 
 public class Sim {
-
+    // Global variables
+    public static int totalSick = 0;
+    public static int totalDead = 0;
+    
     public static void main (String args[]){ // Use from command line later
         int[] position;
         int day = 0;
+        
         
         // Get all input information
         Scanner reader = new Scanner(System.in);
@@ -24,6 +28,7 @@ public class Sim {
         int minDays = reader.nextInt();
         System.out.println("Enter max days: ");
         int maxDays = reader.nextInt();
+
         
         // Initialize NxN array
         Node[][] matrix = new Node[nDimension][nDimension];
@@ -41,8 +46,9 @@ public class Sim {
         
         // Set sick nodes for initial state
         System.out.println("Enter number of sick: ");
-        int totalSick = reader.nextInt();
-        for(int i = 0; i < totalSick; i++){
+        int sickInitially = reader.nextInt();
+        totalSick = sickInitially;
+        for(int i = 0; i < sickInitially; i++){
             System.out.println("Enter coordinates x,y ");
             String positionString = reader.next();
             String[] stringItem = positionString.replaceAll("\\s", "").split(",");
@@ -58,9 +64,10 @@ public class Sim {
             randStart += amount/simulationDays;
             System.out.println("");
         }
+        printStatus(matrix, nDimension); // In order to get last day 
         
     } 
-   
+    // Spread the diesease and update nodes that get sick, immune or die
     public static void spreadDiesease(Node[][] matrix, double pSick, double pDead, double[] randList, int randStart, int nDimension){
         List<Node> setSickToday = new ArrayList<>();
         List<Node> setDeadToday = new ArrayList<>();
@@ -78,7 +85,7 @@ public class Sim {
                     }
                 }
 
-                if(matrix[i][j].getSick() == 1 & matrix[i][j].getImmune() == 0){
+                if(matrix[i][j].getSick() == 1 & matrix[i][j].getImmune() == 0 & matrix[i][j].getDead() == 0){
                     if((randList[(i * nDimension + j + randStart)% 100])  < pDead){
                         setDeadToday.add(matrix[i][j]);
                     }
@@ -98,13 +105,25 @@ public class Sim {
             node.setDead();
             deadToday++;
         }
+        int totalImmune = 0;
+        for(int i = 0; i < nDimension; i++){
+            for(int j = 0; j < nDimension; j++){
+                if(matrix[i][j].getImmune() == 1) totalImmune++;
+            }
+        }
+        
         System.out.println("Nodes that turned sick today is: " + sickToday);
         System.out.println("Nodes that died today is: " + deadToday);
+        System.out.println("Nodes that became immune today is: " + totalImmune);
+        totalSick += sickToday;
+        System.out.println("Total nodes that is/was sick is: " + totalSick);
+        totalDead += deadToday;
+        System.out.println("Total nodes that is dead is: " + totalDead);
         
         // Increase day to update if any node becomes immune
         for(int i = 0; i < nDimension; i++){
             for(int j = 0; j < nDimension; j++){
-                matrix[i][j].incDay();
+                matrix[i][j].incDay(); 
             }
         }
 
