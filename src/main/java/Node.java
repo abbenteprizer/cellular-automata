@@ -43,6 +43,16 @@ public class Node {
         System.out.println("days before immune " + daysBeforeImmune);
     }
     
+    // Returns boolean true if node got sick, false if it didnt.
+    public boolean sickRisk(double pSick, double random){
+        boolean sick = false;
+        if(random < pSick){ 
+            sick = true;
+            //System.out.println("random number was " + random + " person is now sick " + node.getRowPosition() + "," + node.getCowPosition());
+        }
+        return sick;
+    }
+    
     public void setDead(){
         this.dead = 1;
     }

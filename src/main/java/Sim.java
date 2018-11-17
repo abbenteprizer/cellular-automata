@@ -1,21 +1,15 @@
 /**
- * @author Albert
+ * @author abbenteprizer
  */
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.Random;
-import java.util.*; // import all instead
+import java.util.*;
 
-public class sim {
+// Creates N*N cell automata with states, alive, sick, dead and immune. 
+public class Sim {
 
-
-    public static void main (String args[]){
-            // global
-    int globalSick = 0;
-    int globalDead = 0;
-        // Initialization of global
+    public static void main (String args[]){ // Use from command line later
         int[] position;
         int day = 0;
+        
         // Get all input information
         Scanner reader = new Scanner(System.in);
         System.out.println("Enter dimension N: ");
@@ -31,11 +25,6 @@ public class sim {
         System.out.println("Enter max days: ");
         int maxDays = reader.nextInt();
         
-        // Pseudo random number generation
-        long seed = 1354657; // For pseudo random number generation
-        int amount = 100;
-        double[] randList = generateNumbers(seed, amount); // arg1 seed, arg2 amount
-        
         // Initialize NxN array
         Node[][] matrix = new Node[nDimension][nDimension];
         for(int i = 0; i < nDimension; i++){
@@ -44,29 +33,33 @@ public class sim {
                 matrix[i][j] = new Node(pos, minDays, maxDays);
             }
         }
+     
+        // Pseudo random number generation
+        long seed = 1354657; 
+        int amount = 100;
+        double[] randList = generateNumbers(seed, amount); 
         
-        // Sets sick
+        // Set sick nodes for initial state
         System.out.println("Enter number of sick: ");
         int totalSick = reader.nextInt();
         for(int i = 0; i < totalSick; i++){
             System.out.println("Enter coordinates x,y ");
             String positionString = reader.next();
             String[] stringItem = positionString.replaceAll("\\s", "").split(",");
-            setSick(matrix
-                    [Integer.parseInt(stringItem[0])]
-                    [Integer.parseInt(stringItem[1])]);
+            matrix[Integer.parseInt(stringItem[0])] // SetSick on node
+                  [Integer.parseInt(stringItem[1])].setSick();
         }
 
-        int randStart = 0;
+        // Simulation for each day
+        int randStart = 0; // Used to traverse further in pseudo random list. 
         for(int i = 0; i < simulationDays; i++){
-            printStatus(matrix, nDimension);
+            printStatus(matrix, nDimension); // Prints the N'N table
             spreadDiesease(matrix, pSick, pDead, randList, randStart, nDimension);
             randStart += amount/simulationDays;
             System.out.println("");
         }
         
-        
-    } // end of main
+    } 
    
     public static void spreadDiesease(Node[][] matrix, double pSick, double pDead, double[] randList, int randStart, int nDimension){
         List<Node> setSickToday = new ArrayList<>();
@@ -79,9 +72,8 @@ public class sim {
                 }
                 else {
                     if(isNeighbourSick(matrix, matrix[i][j])){ 
-                        if(sickRisk(matrix[i][j], pSick, (randList[(i *nDimension + j + randStart)%100]))){ // ugly randlist will repeat index, 100 should be amount 
+                        if(matrix[i][j].sickRisk(pSick, (randList[(i *nDimension + j + randStart)%100]))){ // ugly randlist will repeat index, 100 should be amount 
                             setSickToday.add(matrix[i][j]);
-                            //setSick(matrix[i][j]);
                         }
                     }
                 }
@@ -94,10 +86,11 @@ public class sim {
             }
         System.out.println("");
         }
+        
         // These are updated outside of the loop
         int sickToday = 0;
         for(Node node: setSickToday){
-            setSick(node);
+            node.setSick();
             sickToday++;
         }
         int deadToday = 0;
@@ -108,6 +101,7 @@ public class sim {
         System.out.println("Nodes that turned sick today is: " + sickToday);
         System.out.println("Nodes that died today is: " + deadToday);
         
+        // Increase day to update if any node becomes immune
         for(int i = 0; i < nDimension; i++){
             for(int j = 0; j < nDimension; j++){
                 matrix[i][j].incDay();
@@ -115,16 +109,8 @@ public class sim {
         }
 
     }
-    // Returns boolean true if node got sick, false if it didnt.
-     public static boolean sickRisk(Node node, double pSick, double random){
-        boolean sick = false;
-        if(random < pSick){ 
-            sick = true;
-            //System.out.println("random number was " + random + " person is now sick " + node.getRowPosition() + "," + node.getCowPosition());
-        }
-        return sick;
-    }
 
+    // Pseudo random number generator
     public static double[] generateNumbers(long seed, int amount) {
         double[] randomList = new double[amount];
         for (int i = 0; i < amount; i++) {
@@ -135,16 +121,17 @@ public class sim {
         return randomList;
     }
     
-    
+    // Checks if any adjacent node is sick
     public static boolean isNeighbourSick(Node[][] matrix ,Node node){
         boolean bool = false;
         node.calcNeighbours(matrix);
         for (int i = 0; i < node.neighbours.size(); i++) {
-            if(getSick((Node)node.neighbours.get(i)) == 1) bool = true;
+            if(((Node)node.neighbours.get(i)).getSick() == 1) bool = true;
         }
         return bool;
     }
     
+    // Prints out the table
     public static void printStatus(Node[][] matrix, int nDimension){
         // Print out sick status
         for(int i = 0; i < nDimension; i++){
@@ -153,18 +140,6 @@ public class sim {
             }
             System.out.println("");
         }
-    }
-    
-    public static int getSick(Node node){
-        return node.getSick();
-    }
-
-    public static void setSick(Node node){
-        node.setSick();
-    }
-    
-    public static void setImmune(Node node){
-        node.setImmune();
     }
     
 }
