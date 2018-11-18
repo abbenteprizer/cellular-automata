@@ -12,7 +12,15 @@ public class Sim {
     public static void main (String args[]){ // Use from command line later
         int[] position;
         int day = 0;
-        
+        /*
+        int nDimension = Integer.parseInt(args[0]);
+        double pSick = Double.parseDouble(args[1]);
+        double pDead = Double.parseDouble(args[2]);
+        int simulationDays = Integer.parseInt(args[3]);
+        int minDays = Integer.parseInt(args[4]);;
+        int maxDays = Integer.parseInt(args[5]);
+        int sickInitially = Integer.parseInt(args[6]);
+        */
         
         // Get all input information
         Scanner reader = new Scanner(System.in);
@@ -28,6 +36,8 @@ public class Sim {
         int minDays = reader.nextInt();
         System.out.println("Enter max days: ");
         int maxDays = reader.nextInt();
+        System.out.println("Enter number of sick: ");
+        int sickInitially = reader.nextInt();
 
         
         // Initialize NxN array
@@ -45,12 +55,11 @@ public class Sim {
         double[] randList = generateNumbers(seed, amount); 
         
         // Set sick nodes for initial state
-        System.out.println("Enter number of sick: ");
-        int sickInitially = reader.nextInt();
+
         totalSick = sickInitially;
         for(int i = 0; i < sickInitially; i++){
             System.out.println("Enter coordinates x,y ");
-            String positionString = reader.next();
+            String positionString =  reader.next(); //args[7 + i]; // argument from main
             String[] stringItem = positionString.replaceAll("\\s", "").split(",");
             matrix[Integer.parseInt(stringItem[0])] // SetSick on node
                   [Integer.parseInt(stringItem[1])].setSick();

@@ -65,7 +65,6 @@ public class Node {
         if(this.sick == 1) status = 'S';
         if(this.immune == 1) status = 'I';
         if(this.dead == 1) status = 'D'; 
-        
         return status;
     }
     
@@ -91,6 +90,8 @@ public class Node {
     public int getCowPosition(){
         return this.positionCol;
     }
+    
+    // Calculates all adjacent neighbours and stores them in "neigbours"
     public void calcNeighbours(Node[][] matrix){
         for(int i  = this.positionRow - 1; i <= this.positionRow + 1; i++){
             for(int j  = this.positionCol - 1; j <= this.positionCol + 1; j++){
@@ -108,7 +109,7 @@ public class Node {
                     // Do nothing
                 }
             }
-    }
+        }
 
     }
     
@@ -118,22 +119,5 @@ public class Node {
             System.out.println(this.neighbours.get(i));
         }
     }
-    /*
-    public boolean isNeghbourSick(){
-        boolean bool = false;
-        for (int i = 0; i < this.neighbours.size(); i++) {
-            if( (Node)this.neighbours.get(i).getSick() ){
-                bool = true;
-            }
-        }
-        return bool;
-    }
-  */
-    public void printInfo(){
-        System.out.println(
-                "positionRow = " + positionRow + 
-                "\nPostitionCol = " + positionCol);
-    }
-    
     
 }
