@@ -40,7 +40,7 @@ public class Node {
         Random generator = new Random(this.positionCol + this.positionRow + 420003156); // col + 42 is seed
         double rand = (generator.nextDouble() % 0.001 * 1000);
         int daysBeforeImmune = (int) (minDaysSick + (maxDaysSick - minDaysSick + 1) * rand );
-        System.out.println("days before immune " + daysBeforeImmune);
+        //System.out.println("days before immune " + daysBeforeImmune);
     }
     
     // Returns boolean true if node got sick, false if it didnt.
@@ -54,6 +54,7 @@ public class Node {
     }
     
     public void setDead(){
+        this.sick = 0;
         this.dead = 1;
     }
     public int getDead(){
